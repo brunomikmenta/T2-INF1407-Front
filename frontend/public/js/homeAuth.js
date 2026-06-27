@@ -1,4 +1,4 @@
-const backendAddress = '/';
+const backendAddress = '/home';
 
 window.addEventListener('DOMContentLoaded', () => {
     const authBtn = document.getElementById('auth-btn');

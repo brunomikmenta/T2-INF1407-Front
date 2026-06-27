@@ -1,4 +1,4 @@
-import { backendAddress } from './constante.ts';
+import { backendAddress } from './constante';
 
 function getCookie(name: string): string {
 	const cookieValue = `; ${document.cookie}`;

@@ -1,18 +1,12 @@
-const backendAddress = '/';
+﻿const backendAddress = 'http://127.0.0.1:8000/';
 
 window.addEventListener('DOMContentLoaded', () => {
-    const songView = document.getElementById('profile-songs-view');
-    const editView = document.getElementById('profile-edit-view');
-    const btnSongs = document.getElementById('btn-show-songs');
-    const btnEdit = document.getElementById('btn-show-edit');
-    const profileForm = document.getElementById('profile-form');
-    const message = document.getElementById('profile-message');
-    const usernameBadge = document.getElementById('profile-username');
-    const nameField = document.getElementById('profile-name');
-    const emailField = document.getElementById('profile-email');
-    const firstNameField = document.getElementById('profile-first-name');
-    const lastNameField = document.getElementById('profile-last-name');
-    const genderField = document.getElementById('profile-gender');
+    const profileTitle = document.getElementById('profile-name-title');
+    const songListEmpty = document.getElementById('song-list-empty');
+    const songListLoading = document.getElementById('song-list-loading');
+    const songListTable = document.getElementById('song-list-table');
+    const songListBody = document.getElementById('song-list-body');
+    const songListMessage = document.getElementById('song-list-message');
 
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
@@ -21,34 +15,52 @@ window.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    const showSongs = () => {
-        songView?.classList.remove('is-hidden');
-        editView?.classList.add('is-hidden');
-        btnSongs?.classList.add('is-active');
-        btnEdit?.classList.remove('is-active');
+    const setMessage = (element, text, color = 'white') => {
+        if (!element) return;
+        element.textContent = text;
+        element.style.color = color;
     };
 
-    const showEdit = () => {
-        songView?.classList.add('is-hidden');
-        editView?.classList.remove('is-hidden');
-        btnSongs?.classList.remove('is-active');
-        btnEdit?.classList.add('is-active');
+    const renderSongList = (songs) => {
+        if (!songListBody) return;
+        songListBody.innerHTML = '';
+
+        if (!songs || songs.length === 0) {
+            songListTable?.classList.add('d-none');
+            songListEmpty?.classList.remove('is-hidden');
+            return;
+        }
+
+        songListTable?.classList.remove('d-none');
+        songListEmpty?.classList.add('is-hidden');
+
+        songs.forEach((song, index) => {
+            const tr = document.createElement('tr');
+            const id = song.id || '';
+            const title = song.name || song.title || 'Sem título';
+            const artist = song.artist || 'Desconhecido';
+            const genre = song.gender || song.genre || '-';
+
+            tr.innerHTML = `
+                <td>#${index + 1}</td>
+                <td><strong>${title}</strong></td>
+                <td>${artist}</td>
+                <td>${genre}</td>
+                <td>
+                    <a href="/editsong/${id}/">Editar</a> |
+                    <a href="/deletesong/${id}/">Deletar</a>
+                </td>
+            `;
+
+            songListBody.appendChild(tr);
+        });
     };
-
-    btnSongs?.addEventListener('click', showSongs);
-    btnEdit?.addEventListener('click', showEdit);
-
-    showSongs();
-
-    const username = localStorage.getItem('username') || 'Usuário';
-    if (usernameBadge) {
-        usernameBadge.textContent = username;
-    }
 
     const loadProfile = async () => {
         try {
             const response = await fetch(`${backendAddress}api/profile/`, {
                 method: 'GET',
+                credentials: 'include',
                 headers: {
                     'Content-Type': 'application/json',
                 },
@@ -60,66 +72,48 @@ window.addEventListener('DOMContentLoaded', () => {
             }
 
             const data = await response.json();
+            const username = data.username || data.user?.username || localStorage.getItem('username') || 'Usuário';
 
-            if (nameField) nameField.value = data.username || '';
-            if (emailField) emailField.value = data.email || '';
-            if (firstNameField) firstNameField.value = data.firstName || '';
-            if (lastNameField) lastNameField.value = data.lastName || '';
-            if (genderField) genderField.value = data.gender || '';
-        } catch (error) {
-            if (message) {
-                message.textContent = 'Nao foi possivel carregar seu perfil.';
-                message.style.color = 'red';
+            if (profileTitle) {
+                profileTitle.textContent = username;
             }
+
+            localStorage.setItem('username', username);
+        } catch (error) {
+            setMessage(songListMessage, 'Não foi possível carregar seu perfil.', 'red');
+        }
+    };
+
+    const loadSongs = async () => {
+        songListLoading?.classList.remove('is-hidden');
+        setMessage(songListMessage, '');
+
+        try {
+            const response = await fetch(`${backendAddress}api/profile/songs/`, {
+                method: 'GET',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+            });
+
+            songListLoading?.classList.add('is-hidden');
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                setMessage(songListMessage, errorData.detail || 'Erro ao carregar a lista de músicas.', 'red');
+                return;
+            }
+
+            const data = await response.json();
+            const songs = data.songs || data.get_songs || data || [];
+            renderSongList(Array.isArray(songs) ? songs : []);
+        } catch (error) {
+            songListLoading?.classList.add('is-hidden');
+            setMessage(songListMessage, 'Erro de rede ao carregar a lista de músicas.', 'red');
         }
     };
 
     loadProfile();
-
-    profileForm?.addEventListener('submit', async (event) => {
-        event.preventDefault();
-
-        const payload = {
-            username: nameField?.value.trim() || '',
-            email: emailField?.value.trim() || '',
-            firstName: firstNameField?.value.trim() || '',
-            lastName: lastNameField?.value.trim() || '',
-            gender: genderField?.value || '',
-        };
-
-        try {
-            const response = await fetch(`${backendAddress}api/profile/`, {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(payload),
-            });
-
-            const data = await response.json();
-
-            if (!response.ok) {
-                if (message) {
-                    message.textContent = data.detail || 'Nao foi possivel atualizar o perfil.';
-                    message.style.color = 'red';
-                }
-                return;
-            }
-
-            localStorage.setItem('username', data.username || payload.username);
-            if (usernameBadge) {
-                usernameBadge.textContent = data.username || payload.username;
-            }
-
-            if (message) {
-                message.textContent = 'Perfil atualizado com sucesso.';
-                message.style.color = 'green';
-            }
-        } catch (error) {
-            if (message) {
-                message.textContent = 'Erro de rede ao atualizar o perfil.';
-                message.style.color = 'red';
-            }
-        }
-    });
+    loadSongs();
 });

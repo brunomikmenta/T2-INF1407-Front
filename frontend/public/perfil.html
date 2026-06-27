@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Perfil - MySongProfileApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet"
+        integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    <link rel="stylesheet" href="./css/estilo.css">
+</head>
+
+<body>
+    <header>
+        <h1>MySongProfileApp</h1>
+    </header>
+
+    <nav id="leftbar">
+        <ul>
+            <li><a class="btn btn-primary" href="/">Home</a></li>
+            <li><a class="btn btn-primary" href="/perfil/">Perfil</a></li>
+            <li><a class="btn btn-primary" href="/configuracao/">Configurações</a></li>
+            <li class="login-component"><a id="auth-btn" class="btn btn-primary" href="/login/">Login</a></li>
+        </ul>
+    </nav>
+
+    <main class="profile-page">
+        <div class="profile-info-container">
+            <h1>Perfil de <span id="profile-name-title">Usuário</span></h1>
+
+            <div class="profile-songlist-container">
+                <h2>Suas Músicas Favoritas:</h2>
+
+                <div id="song-list-loading" class="profile-empty-state">
+                    <p>Carregando músicas...</p>
+                </div>
+
+                <div id="song-list-empty" class="profile-empty-state is-hidden">
+                    <p>Nenhuma música adicionada ainda.</p>
+                    <p><a href="/crialista/">Crie uma lista</a></p>
+                </div>
+
+                <table id="song-list-table" class="songlist-table table table-striped d-none">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>Título</th>
+                            <th>Artista</th>
+                            <th>Gênero</th>
+                            <th>Ações Disponíveis</th>
+                        </tr>
+                    </thead>
+                    <tbody id="song-list-body"></tbody>
+                </table>
+
+                <div id="song-list-message" class="profile-message"></div>
+            </div>
+        </div>
+    </main>
+
+    <script src="./js/homeAuth.js"></script>
+    <script src="./js/perfil.js"></script>
+</body>
+
+</html>
