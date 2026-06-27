@@ -55,7 +55,7 @@ if (form) {
             });
 
             alert('Usuário cadastrado com sucesso.');
-            window.location.href = '/login/';
+            window.location.href = './login.html';
         } catch (error) {
             alert(`Erro ao cadastrar usuário: ${error.message}`);
         }

@@ -23,7 +23,7 @@ window.onload = () => {
             const loginResult = await login(username, password);
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('username', loginResult.username);
-            window.location.href = '/';
+            window.location.href = './index.html';
         } catch (error) {
             if (msg) {
                 msg.textContent = 'Usuário ou senha inválidos';

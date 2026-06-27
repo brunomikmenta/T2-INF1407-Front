@@ -16,7 +16,7 @@ addEventListener('load', function() {
         message.textContent = 'Token de redefinicao nao encontrado. Solicite um novo.';
         message.style.color = 'red';
         setTimeout(() => {
-            location.href = '/esqueceuSenha/';
+            location.href = './esqueceuSenha.html';
         }, 2000);
         return;
     }
@@ -52,7 +52,7 @@ addEventListener('load', function() {
                 message.textContent = 'Senha alterada com sucesso! Faca login novamente';
                 message.style.color = 'green';
                 setTimeout(() => {
-                    location.href = '/login/';
+                    location.href = './login.html';
                 }, 1700);
             } else {
                 message.textContent = data.detail || 'Ocorreu um erro ao alterar a senha.';

@@ -11,7 +11,7 @@ window.addEventListener('DOMContentLoaded', () => {
     const isLoggedIn = localStorage.getItem('isLoggedIn') === 'true';
 
     if (!isLoggedIn) {
-        window.location.href = '/login/';
+        window.location.href = './login.html';
         return;
     }
 
@@ -47,8 +47,8 @@ window.addEventListener('DOMContentLoaded', () => {
                 <td>${artist}</td>
                 <td>${genre}</td>
                 <td>
-                    <a href="/editsong/${id}/">Editar</a> |
-                    <a href="/deletesong/${id}/">Deletar</a>
+                    <a href="./editarPerfil.html?songId=${id}">Editar</a> |
+                    <a href="./editarPerfil.html?deleteSongId=${id}">Deletar</a>
                 </td>
             `;
 
@@ -67,7 +67,7 @@ window.addEventListener('DOMContentLoaded', () => {
             });
 
             if (!response.ok) {
-                window.location.href = '/login/';
+                window.location.href = './login.html';
                 return;
             }
 

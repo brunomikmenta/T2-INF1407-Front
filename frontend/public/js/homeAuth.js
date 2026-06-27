@@ -1,4 +1,4 @@
-const backendAddress = '/home';
+const backendAddress = '/';
 
 window.addEventListener('DOMContentLoaded', () => {
     const authBtn = document.getElementById('auth-btn');
@@ -11,19 +11,19 @@ window.addEventListener('DOMContentLoaded', () => {
 
     if (isLoggedIn) {
         authBtn.textContent = 'Logout';
-        authBtn.setAttribute('href', '/');
+        authBtn.setAttribute('href', './index.html');
         authBtn.addEventListener('click', async (event) => {
             event.preventDefault();
             await logout();
             localStorage.removeItem('isLoggedIn');
             localStorage.removeItem('username');
-            window.location.href = '/';
+            window.location.href = './index.html';
         });
         return;
     }
 
     authBtn.textContent = 'Login';
-    authBtn.setAttribute('href', '/login/');
+    authBtn.setAttribute('href', './login.html');
 });
 
 async function logout() {

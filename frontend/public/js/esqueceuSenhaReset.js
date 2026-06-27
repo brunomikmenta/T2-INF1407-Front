@@ -16,7 +16,7 @@ window.addEventListener('load', () => {
         message.textContent = 'Token de redefinicao nao encontrado. Solicite um novo.';
         message.style.color = 'red';
         setTimeout(() => {
-            window.location.href = '/esqueceuSenha/';
+            window.location.href = './esqueceuSenha.html';
         }, 2000);
         return;
     }
@@ -58,7 +58,7 @@ window.addEventListener('load', () => {
             message.style.color = 'green';
 
             setTimeout(() => {
-                window.location.href = '/login/';
+                window.location.href = './login.html';
             }, 1700);
         } catch (error) {
             message.textContent = `Erro de rede: ${error.message || error}`;

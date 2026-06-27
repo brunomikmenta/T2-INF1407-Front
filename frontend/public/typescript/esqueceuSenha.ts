@@ -30,7 +30,7 @@ addEventListener('DOMContentLoaded', () => {
                     localStorage.setItem('resetToken', resetCode);
                     messageDiv.textContent = `Foi solicitado a recuperação de senha para sua conta`;
                     setTimeout(() => {
-                        location.href = `/esqueceuSenha/reset/`;
+                        location.href = './esqueceuSenhaReset.html';
                     }, 1700);
                 } else {
                     messageDiv.textContent = 'Se o e-mail existir, a recuperacao foi iniciada.';
