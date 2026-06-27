@@ -1,4 +1,4 @@
-const backendAddress = 'http://127.0.0.1:8000/';
+const backendAddress = 'http://localhost:8000/';
 
 window.addEventListener('load', () => {
     const form = document.getElementById('formResetSenha');

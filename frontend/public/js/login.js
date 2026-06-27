@@ -1,4 +1,14 @@
-const backendAddress = 'http://127.0.0.1:8000/';
+const backendCandidates = ['http://localhost:8000/', 'http://127.0.0.1:8000/'];
+
+function getOrderedBackends() {
+    const saved = localStorage.getItem('activeBackendAddress');
+
+    if (!saved || !backendCandidates.includes(saved)) {
+        return backendCandidates;
+    }
+
+    return [saved, ...backendCandidates.filter((host) => host !== saved)];
+}
 
 window.onload = () => {
     const form = document.getElementById('loginForm');
@@ -21,8 +31,17 @@ window.onload = () => {
             const loginResult = await login(username, password);
             localStorage.setItem('isLoggedIn', 'true');
             localStorage.setItem('username', loginResult.username);
+            if (loginResult.access) {
+                localStorage.setItem('accessToken', loginResult.access);
+            }
+            if (loginResult.refresh) {
+                localStorage.setItem('refreshToken', loginResult.refresh);
+            }
             window.location.href = './index.html';
         } catch (error) {
+            localStorage.removeItem('isLoggedIn');
+            localStorage.removeItem('accessToken');
+            localStorage.removeItem('refreshToken');
             if (msg) {
                 msg.textContent = error.message || 'Usuário ou senha inválidos';
             }
@@ -31,19 +50,32 @@ window.onload = () => {
 };
 
 async function login(username, password) {
-    const response = await fetch(`${backendAddress}api/login/`, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, password }),
-    });
+    let lastError = 'Login inválido';
 
-    const data = await response.json();
+    for (const backendAddress of getOrderedBackends()) {
+        try {
+            const response = await fetch(`${backendAddress}api/login/`, {
+                method: 'POST',
+                credentials: 'include',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ username, password }),
+            });
 
-    if (!response.ok) {
-        throw new Error(data.detail || 'Login inválido');
+            const data = await response.json().catch(() => ({}));
+
+            if (!response.ok) {
+                lastError = data.detail || 'Login inválido';
+                continue;
+            }
+
+            localStorage.setItem('activeBackendAddress', backendAddress);
+            return data;
+        } catch (error) {
+            lastError = 'Falha de rede ao tentar login.';
+        }
     }
 
-    return data;
+    throw new Error(lastError);
 }
