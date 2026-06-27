@@ -1,7 +1,8 @@
-const backendAddress = '/';
+const backendAddress = 'http://127.0.0.1:8000/';
 
 window.addEventListener('DOMContentLoaded', () => {
     const authBtn = document.getElementById('auth-btn');
+    const profileBtn = document.getElementById('perfil-btn');
 
     if (!authBtn) {
         return;
@@ -12,6 +13,9 @@ window.addEventListener('DOMContentLoaded', () => {
     if (isLoggedIn) {
         authBtn.textContent = 'Logout';
         authBtn.setAttribute('href', './index.html');
+        if (profileBtn) {
+            profileBtn.setAttribute('href', './perfil.html');
+        }
         authBtn.addEventListener('click', async (event) => {
             event.preventDefault();
             await logout();
@@ -24,6 +28,9 @@ window.addEventListener('DOMContentLoaded', () => {
 
     authBtn.textContent = 'Login';
     authBtn.setAttribute('href', './login.html');
+    if (profileBtn) {
+        profileBtn.setAttribute('href', './login.html');
+    }
 });
 
 async function logout() {

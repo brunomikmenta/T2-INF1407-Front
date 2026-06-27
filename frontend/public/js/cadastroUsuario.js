@@ -1,4 +1,4 @@
-const backendAddress = '/';
+const backendAddress = 'http://127.0.0.1:8000/';
 
 function getCookie(name) {
     const cookieValue = `; ${document.cookie}`;
@@ -15,7 +15,7 @@ async function cadastrarUsuario(usuario) {
 
     const response = await fetch(`${backendAddress}api/users/`, {
         method: 'POST',
-        credentials: 'same-origin',
+        credentials: 'include',
         headers: {
             'Content-Type': 'application/json',
             'X-CSRFToken': csrfToken,
@@ -57,6 +57,11 @@ if (form) {
             alert('Usuário cadastrado com sucesso.');
             window.location.href = './login.html';
         } catch (error) {
+            if (error instanceof TypeError) {
+                alert('Erro ao cadastrar usuário: não foi possível conectar ao backend (porta 8000).');
+                return;
+            }
+
             alert(`Erro ao cadastrar usuário: ${error.message}`);
         }
     });
